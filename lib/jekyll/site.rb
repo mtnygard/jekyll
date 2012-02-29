@@ -83,7 +83,9 @@ module Jekyll
       self.converters = Jekyll::Converter.subclasses.select do |c|
         !self.safe || c.safe
       end.map do |c|
-        c.new(self.config)
+        conv = c.new(self.config)
+				conv.locals({:site => self})
+				conv
       end
 
       self.generators = Jekyll::Generator.subclasses.select do |c|
