@@ -27,6 +27,12 @@ module Jekyll
                     entry_convert_breaks \
              FROM mt_entry"
 
+    CATEGORY_QUERY = "SELECT c.category_label \
+                      FROM   mt_category c, \
+                             mt_placement p \
+                      WHERE c.category_id = p.placement_category_id \
+                        AND p.placement_entry_id = ?"
+
     def self.process(dbname, user, pass, host = 'localhost')
       db = Sequel.mysql(dbname, :user => user, :password => pass, :host => host, :encoding => 'utf8')
 
@@ -40,6 +46,8 @@ module Jekyll
         more_content = post[:entry_text_more]
         entry_convert_breaks = post[:entry_convert_breaks]
 
+        categories = db[CATEGORY_QUERY, post[:entry_id]].map(:category_label) || []
+
         # Be sure to include the body and extended body.
         if more_content != nil
           content = content + " \n" + more_content
@@ -52,10 +60,11 @@ module Jekyll
                self.suffix(entry_convert_breaks)
 
         data = {
-           'layout' => 'post',
-           'title' => title.to_s,
-           'mt_id' => post[:entry_id],
-           'date' => date
+          'layout' => 'post',
+          'title' => title.to_s,
+          'mt_id' => post[:entry_id],
+          'date' => date,
+          'categories' => categories.map {|c| c.to_s}
          }.delete_if { |k,v| v.nil? || v == '' }.to_yaml
 
         File.open("_posts/#{name}", "w") do |f|
