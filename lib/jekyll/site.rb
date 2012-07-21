@@ -84,8 +84,8 @@ module Jekyll
         !self.safe || c.safe
       end.map do |c|
         conv = c.new(self.config)
-				conv.locals({:site => self})
-				conv
+        conv.locals({:site => self})
+        conv
       end
 
       self.generators = Jekyll::Generator.subclasses.select do |c|
