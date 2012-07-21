@@ -45,6 +45,11 @@ module Jekyll
     def pygments_suffix
       self.class.pygments_suffix
     end
+
+		def locals(locals = nil)
+			@locals = locals if locals
+			@locals
+		end
   end
 
 end
