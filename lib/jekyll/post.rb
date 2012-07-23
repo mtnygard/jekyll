@@ -227,7 +227,8 @@ module Jekyll
         "next"       => self.next,
         "previous"   => self.previous,
         "tags"       => self.tags,
-        "content"    => self.content })
+        "content"    => self.content,
+        "excerpt"    => self.excerpt})
     end
 
     def inspect
@@ -251,6 +252,18 @@ module Jekyll
       else
         nil
       end
+    end
+
+    def truncatewords(input, words = 15, truncate_string = "...")
+      if input.nil? then return end
+      wordlist = input.to_s.split
+      l = words.to_i - 1
+      l = 0 if l < 0
+      wordlist.length > l ? wordlist[0..l].join(" ") + truncate_string : input
+    end
+
+    def excerpt
+      @excerpt ||= truncatewords(self.content, 100, "...")
     end
   end
 
